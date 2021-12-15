@@ -13,9 +13,20 @@ public class CarModel {
 
     private String name;
 
+    @ManyToOne
+    @JoinColumn
+    private CarBrand carBrand;
+
     public static CarModel of(String name) {
         CarModel carModel = new CarModel();
         carModel.setName(name);
+        return carModel;
+    }
+
+    public static CarModel of(String name, CarBrand brand) {
+        CarModel carModel = new CarModel();
+        carModel.setName(name);
+        carModel.setCarBrand(brand);
         return carModel;
     }
 
@@ -33,6 +44,14 @@ public class CarModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public CarBrand getCarBrand() {
+        return carBrand;
+    }
+
+    public void setCarBrand(CarBrand carBrand) {
+        this.carBrand = carBrand;
     }
 
     @Override

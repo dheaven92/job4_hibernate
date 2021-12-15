@@ -7,6 +7,8 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -20,7 +22,50 @@ public class HbmRun {
             .buildSessionFactory();
 
     public static void main(String[] args) {
-        new HbmRun().runExampleManyToMany();
+        new HbmRun().runExampleBiderectedOneToMany();
+    }
+
+    private void runExampleBiderectedOneToMany() {
+        executeTransaction(session -> {
+            CarBrand chevrolet = CarBrand.of("Chevrolet");
+            List<CarModel> chevroletModels = List.of(
+                    CarModel.of("Spark", chevrolet),
+                    CarModel.of("Tahoe", chevrolet),
+                    CarModel.of("Traverse", chevrolet),
+                    CarModel.of("Cobalt", chevrolet),
+                    CarModel.of("Nexia", chevrolet)
+            );
+            chevroletModels.forEach(chevrolet::addCarModel);
+            session.save(chevrolet);
+
+            CarBrand nissan = CarBrand.of("Nissan");
+            List<CarModel> nissanModels = List.of(
+                    CarModel.of("Qashqai", nissan),
+                    CarModel.of("Murano", nissan)
+            );
+            nissanModels.forEach(nissan::addCarModel);
+            session.save(nissan);
+        });
+        /* in the same transaction */
+        executeTransaction(session -> {
+            List<CarBrand> brands = session.createQuery("from CarBrand").list();
+            brands.stream()
+                    .map(CarBrand::getCarModels)
+                    .flatMap(Collection::stream)
+                    .forEach(model -> System.out.println(model.getName()));
+        });
+        /* join fetch */
+        List<CarBrand> brands = new ArrayList<>();
+        executeTransaction(session -> {
+            List list = session.createQuery(
+                    "select distinct brand from CarBrand brand join fetch brand.carModels"
+            ).list();
+            brands.addAll(list);
+        });
+        brands.stream()
+                .map(CarBrand::getCarModels)
+                .flatMap(Collection::stream)
+                .forEach(model -> System.out.println(model.getName()));
     }
 
     private void runExampleManyToMany() {
