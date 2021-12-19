@@ -22,7 +22,7 @@ public class HbmRun {
             .buildSessionFactory();
 
     public static void main(String[] args) {
-        new HbmRun().runExampleBiderectedOneToMany();
+        new HbmRun().runHqlExample();
     }
 
     private void runExampleBiderectedOneToMany() {
@@ -102,6 +102,38 @@ public class HbmRun {
             CarBrand brand = CarBrand.of("Chevrolet");
             models.forEach(brand::addCarModel);
             session.save(brand);
+        });
+    }
+
+    private void runHqlExample() {
+        executeTransaction(session -> {
+            /* select all */
+            session.createQuery("from Candidate candidate").list();
+
+            /* select by id */
+            session.createQuery("from Candidate candidate where id = :id")
+                    .setParameter("id", 1)
+                    .uniqueResult();
+
+            /* select by name */
+            session.createQuery("from Candidate candidate where name = :name")
+                    .setParameter("name", "Bob")
+                    .list();
+
+            /* update */
+            session.createQuery(
+                    "update Candidate candidate set name = :name, experience = :experience, salary = :salary where id = :id"
+            )
+                    .setParameter("id", 1)
+                    .setParameter("name", "Bob The Greatest")
+                    .setParameter("experience", 10)
+                    .setParameter("salary", 1000000.0)
+                    .executeUpdate();
+
+            /* delete */
+            session.createQuery("delete Candidate candidate where id = :id")
+                    .setParameter("id", 2)
+                    .executeUpdate();
         });
     }
 

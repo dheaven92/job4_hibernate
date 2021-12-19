@@ -20,5 +20,6 @@
         <mapping class="ru.job4j.hibernate.model.CarBrand" />
         <mapping class="ru.job4j.hibernate.model.Book" />
         <mapping class="ru.job4j.hibernate.model.Author" />
+        <mapping class="ru.job4j.hibernate.model.hql.Candidate" />
     </session-factory>
 </hibernate-configuration>
