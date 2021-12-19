@@ -3,20 +3,18 @@ package ru.job4j.hibernate.model.hql;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "candidate")
-public class Candidate {
+@Table(name = "vacancy")
+public class Vacancy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String name;
-
-    private int experience;
+    private String title;
 
     private double salary;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "vacancy_bank_id")
     private VacancyBank vacancyBank;
 
@@ -28,20 +26,12 @@ public class Candidate {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getExperience() {
-        return experience;
-    }
-
-    public void setExperience(int experience) {
-        this.experience = experience;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public double getSalary() {
@@ -52,14 +42,20 @@ public class Candidate {
         this.salary = salary;
     }
 
+    public VacancyBank getVacancyBank() {
+        return vacancyBank;
+    }
+
+    public void setVacancyBank(VacancyBank vacancyBank) {
+        this.vacancyBank = vacancyBank;
+    }
+
     @Override
     public String toString() {
-        return "Candidate{"
+        return "Vacancy{"
                 + "id=" + id
-                + ", name='" + name + '\''
-                + ", experience=" + experience
+                + ", title='" + title + '\''
                 + ", salary=" + salary
-                + ", vacancyBank=" + vacancyBank
                 + '}';
     }
 }

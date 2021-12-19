@@ -6,6 +6,7 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import ru.job4j.hibernate.model.hql.Candidate;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +23,7 @@ public class HbmRun {
             .buildSessionFactory();
 
     public static void main(String[] args) {
-        new HbmRun().runHqlExample();
+        new HbmRun().runHqlJoinFetchExample();
     }
 
     private void runExampleBiderectedOneToMany() {
@@ -134,6 +135,17 @@ public class HbmRun {
             session.createQuery("delete Candidate candidate where id = :id")
                     .setParameter("id", 2)
                     .executeUpdate();
+        });
+    }
+
+    private void runHqlJoinFetchExample() {
+        executeTransaction(session -> {
+            List<Candidate> candidates = session.createQuery(
+                    "select distinct candidate from Candidate candidate "
+                            + "join fetch candidate.vacancyBank vacancyBank "
+                            + "join fetch vacancyBank.vacancies"
+            ).list();
+            candidates.forEach(System.out::println);
         });
     }
 
